@@ -13,11 +13,14 @@ const configuration = {
 let peerConnection = null;
 let localStream = null;
 let remoteStream = null;
+let localScreenStream = null;
+let remoteScreenStream = null;
 let roomDialog = null;
 let roomId = null;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
+  document.querySelector('#shareBtn').addEventListener('click', openSharedScreen);
   document.querySelector('#hangupBtn').addEventListener('click', hangUp);
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
@@ -37,8 +40,12 @@ async function createRoom() {
 
   const callerCandidatesCollection = roomRef.collection('callerCandidates');
 
-  localStream.getTracks().forEach((track) => {
-    peerConnection.addTrack(track, localStream);
+  // localStream.getTracks().forEach((track) => {
+  //   peerConnection.addTrack(track, localStream);
+  // });
+
+  localScreenStream.getTracks().forEach((track) => {
+    peerConnection.addTrack(track, localScreenStream);
   });
 
   peerConnection.addEventListener('icecandidate', (event) => {
@@ -197,6 +204,19 @@ async function joinRoomById(roomId) {
     });
     // Listening for remote ICE candidates above
   }
+}
+
+async function openSharedScreen() {
+  const stream = await navigator.mediaDevices.getDisplayMedia();
+  localScreenStream = stream;
+  document.querySelector('#localScreen').srcObject = stream;
+
+  remoteScreenStream = new MediaStream();
+  document.querySelector('#remoteScreen').srcObject = remoteScreenStream;
+
+  document.querySelector('#joinBtn').disabled = false;
+  document.querySelector('#createBtn').disabled = false;
+  document.querySelector('#hangupBtn').disabled = false;
 }
 
 async function openUserMedia(e) {

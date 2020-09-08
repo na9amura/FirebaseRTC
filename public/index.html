@@ -24,6 +24,10 @@
         <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
         <span class="mdc-button__label">Open camera & microphone</span>
     </button>
+    <button class="mdc-button mdc-button--raised" id="shareBtn">
+        <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
+        <span class="mdc-button__label">Share screen</span>
+    </button>
     <button class="mdc-button mdc-button--raised" disabled id="createBtn">
         <i class="material-icons mdc-button__icon" aria-hidden="true">group_add</i>
         <span class="mdc-button__label">Create room</span>
@@ -43,6 +47,8 @@
 <div id="videos">
     <video id="localVideo" muted autoplay playsinline></video>
     <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localScreen" muted autoplay playsinline></video>
+    <video id="remoteScreen" muted autoplay playsinline></video>
 </div>
 <div class="mdc-dialog"
      id="room-dialog"
