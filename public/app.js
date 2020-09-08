@@ -4,10 +4,7 @@ mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
 const configuration = {
   iceServers: [
     {
-      urls: [
-        'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302',
-      ],
+      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
     },
   ],
   iceCandidatePoolSize: 10,
@@ -40,8 +37,8 @@ async function createRoom() {
   // Add code for creating a room here
   
   // Code for creating room above
-  
-  localStream.getTracks().forEach(track => {
+
+  localStream.getTracks().forEach((track) => {
     peerConnection.addTrack(track, localStream);
   });
 
@@ -53,9 +50,9 @@ async function createRoom() {
 
   // Code for collecting ICE candidates above
 
-  peerConnection.addEventListener('track', event => {
+  peerConnection.addEventListener('track', (event) => {
     console.log('Got remote track:', event.streams[0]);
-    event.streams[0].getTracks().forEach(track => {
+    event.streams[0].getTracks().forEach((track) => {
       console.log('Add a track to the remoteStream:', track);
       remoteStream.addTrack(track);
     });
@@ -74,14 +71,18 @@ function joinRoom() {
   document.querySelector('#createBtn').disabled = true;
   document.querySelector('#joinBtn').disabled = true;
 
-  document.querySelector('#confirmJoinBtn').
-      addEventListener('click', async () => {
-        roomId = document.querySelector('#room-id').value;
-        console.log('Join room: ', roomId);
-        document.querySelector(
-            '#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
-        await joinRoomById(roomId);
-      }, {once: true});
+  document.querySelector('#confirmJoinBtn').addEventListener(
+    'click',
+    async () => {
+      roomId = document.querySelector('#room-id').value;
+      console.log('Join room: ', roomId);
+      document.querySelector(
+        '#currentRoom'
+      ).innerText = `Current room is ${roomId} - You are the callee!`;
+      await joinRoomById(roomId);
+    },
+    { once: true }
+  );
   roomDialog.open();
 }
 
@@ -95,7 +96,7 @@ async function joinRoomById(roomId) {
     console.log('Create PeerConnection with configuration: ', configuration);
     peerConnection = new RTCPeerConnection(configuration);
     registerPeerConnectionListeners();
-    localStream.getTracks().forEach(track => {
+    localStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, localStream);
     });
 
@@ -103,9 +104,9 @@ async function joinRoomById(roomId) {
 
     // Code for collecting ICE candidates above
 
-    peerConnection.addEventListener('track', event => {
+    peerConnection.addEventListener('track', (event) => {
       console.log('Got remote track:', event.streams[0]);
-      event.streams[0].getTracks().forEach(track => {
+      event.streams[0].getTracks().forEach((track) => {
         console.log('Add a track to the remoteStream:', track);
         remoteStream.addTrack(track);
       });
@@ -122,8 +123,7 @@ async function joinRoomById(roomId) {
 }
 
 async function openUserMedia(e) {
-  const stream = await navigator.mediaDevices.getUserMedia(
-      {video: true, audio: true});
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   document.querySelector('#localVideo').srcObject = stream;
   localStream = stream;
   remoteStream = new MediaStream();
@@ -138,12 +138,12 @@ async function openUserMedia(e) {
 
 async function hangUp(e) {
   const tracks = document.querySelector('#localVideo').srcObject.getTracks();
-  tracks.forEach(track => {
+  tracks.forEach((track) => {
     track.stop();
   });
 
   if (remoteStream) {
-    remoteStream.getTracks().forEach(track => track.stop());
+    remoteStream.getTracks().forEach((track) => track.stop());
   }
 
   if (peerConnection) {
@@ -163,11 +163,11 @@ async function hangUp(e) {
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(roomId);
     const calleeCandidates = await roomRef.collection('calleeCandidates').get();
-    calleeCandidates.forEach(async candidate => {
+    calleeCandidates.forEach(async (candidate) => {
       await candidate.delete();
     });
     const callerCandidates = await roomRef.collection('callerCandidates').get();
-    callerCandidates.forEach(async candidate => {
+    callerCandidates.forEach(async (candidate) => {
       await candidate.delete();
     });
     await roomRef.delete();
@@ -178,8 +178,7 @@ async function hangUp(e) {
 
 function registerPeerConnectionListeners() {
   peerConnection.addEventListener('icegatheringstatechange', () => {
-    console.log(
-        `ICE gathering state changed: ${peerConnection.iceGatheringState}`);
+    console.log(`ICE gathering state changed: ${peerConnection.iceGatheringState}`);
   });
 
   peerConnection.addEventListener('connectionstatechange', () => {
@@ -191,8 +190,7 @@ function registerPeerConnectionListeners() {
   });
 
   peerConnection.addEventListener('iceconnectionstatechange ', () => {
-    console.log(
-        `ICE connection state change: ${peerConnection.iceConnectionState}`);
+    console.log(`ICE connection state change: ${peerConnection.iceConnectionState}`);
   });
 }
 
