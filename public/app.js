@@ -68,19 +68,6 @@ async function createRoom() {
   });
 
   // Code for creating a room below
-  // Should I write code to Joining a room here?
-  const offer = roomSnapshot.data().offer;
-  await peerConnection.setRemoteDescription(offer);
-  const answer = await peerConnection.createAnswer();
-  await peerConnection.setLocalDescription(answer);
-
-  const roomWithAnswer = {
-    answer: {
-      type: answer.type,
-      sdp: answer.sdp,
-    },
-  };
-  await roomRef.update(roomWithAnswer);
 
   // Code for creating a room above
 
@@ -137,6 +124,19 @@ async function joinRoomById(roomId) {
     localStream.getTracks().forEach((track) => {
       peerConnection.addTrack(track, localStream);
     });
+
+    const offer = roomSnapshot.data().offer;
+    await peerConnection.setRemoteDescription(offer);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    const roomWithAnswer = {
+      answer: {
+        type: answer.type,
+        sdp: answer.sdp,
+      },
+    };
+    await roomRef.update(roomWithAnswer);
 
     // Code for collecting ICE candidates below
 
