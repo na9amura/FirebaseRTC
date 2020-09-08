@@ -35,7 +35,32 @@ async function createRoom() {
   registerPeerConnectionListeners();
 
   // Add code for creating a room here
-  
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+
+  const roomWithOffer = {
+    offer: {
+      type: offer.type,
+      sdp: offer.sdp,
+    },
+  };
+  const roomRef = await db.collection('rooms').add(roomWithOffer);
+  const roomId = roomRef.id;
+  document.querySelector(
+    '#currentRoom'
+  ).innerText = `Current roome is ${roomId} - You are the caller!`;
+
+  // wait until guest update database
+  roomRef.onSnapshot(async (snapshot) => {
+    console.log('Got updated room:', snapshot.data());
+    const data = snapshot.data();
+    if (!peerConnection.currentRoomDescription && data.answer) {
+      console.log('Set remote description: ', data.answer);
+      const answer = new RTCSessionDescription(data.answer);
+      await peerConnection.setRemoteDescription(answer);
+    }
+  });
+
   // Code for creating room above
 
   localStream.getTracks().forEach((track) => {
